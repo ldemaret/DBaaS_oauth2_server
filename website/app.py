@@ -3,10 +3,12 @@ from flask import Flask
 from .models import db
 from .oauth2 import config_oauth
 from .routes import bp
+from flask_cors import CORS
 
 
 def create_app(config=None):
     app = Flask(__name__)
+    CORS(app, supports_credentials=True)
 
     # load default configuration
     app.config.from_object('website.settings')
