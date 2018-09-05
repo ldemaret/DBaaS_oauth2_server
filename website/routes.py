@@ -1,4 +1,4 @@
-from flask import Blueprint, request, session
+from flask import Blueprint, request, session, flash, make_response
 from flask import render_template, redirect, jsonify
 from werkzeug.security import gen_salt
 from authlib.flask.oauth2 import current_token
@@ -20,14 +20,14 @@ def current_user():
 @bp.route('/', methods=('GET', 'POST'))
 def home():
     if request.method == 'POST':
-        username = request.form.get('username')
-        user = User.query.filter_by(username=username).first()
-        if not user:
-            user = User(username=username)
-            db.session.add(user)
-            db.session.commit()
-        session['id'] = user.id
-        return redirect('/')
+        username_in = request.form.get('usrname')
+        password_in = request.form.get('passwd')
+        user = User.query.filter_by(username=username_in).first()
+        if user and user.check_password(password_in):
+            session['id'] = user.id
+            return redirect('/')
+        else:
+            flash('Invalid username/password; logon denied', 'pale-red')
     user = current_user()
     if user:
         clients = OAuth2Client.query.filter_by(user_id=user.id).all()
@@ -39,7 +39,7 @@ def home():
 @bp.route('/logout')
 def logout():
     del session['id']
-    return redirect('/')
+    return redirect(request.referrer)
 
 
 @bp.route('/create_client', methods=('GET', 'POST'))
@@ -70,9 +70,15 @@ def authorize():
         except OAuth2Error as error:
             return error.error
         return render_template('authorize.html', user=user, grant=grant)
-    if not user and 'username' in request.form:
-        username = request.form.get('username')
-        user = User.query.filter_by(username=username).first()
+    if not user and 'username' in request.form:        
+        username_in = request.form.get('usrname')
+        password_in = request.form.get('passwd')
+        user = User.query.filter_by(username=username_in).first()
+        if user and user.check_password(password_in):
+            session['id'] = user.id
+        else:
+            flash('Invalid username/password; logon denied', 'pale-red')
+        return redirect(request.url)
     if request.form['confirm']:
         grant_user = user
     else:
