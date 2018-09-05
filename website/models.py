@@ -1,4 +1,5 @@
 import time
+import bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from authlib.flask.oauth2.sqla import (
     OAuth2ClientMixin,
@@ -10,8 +11,10 @@ db = SQLAlchemy()
 
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(40), unique=True)
+    __tablename__ = 'user'
+    id = db.Column(db.Integer, db.Sequence('user_id_seq'), primary_key=True)
+    username = db.Column(db.String(64), unique=True, nullable=False)
+    password = db.Column(db.String(128), nullable=False)
 
     def __str__(self):
         return self.username
@@ -20,7 +23,7 @@ class User(db.Model):
         return self.id
 
     def check_password(self, password):
-        return password == 'valid'
+        return bcrypt.checkpw(password.encode('utf8', self.password)
 
 
 class OAuth2Client(db.Model, OAuth2ClientMixin):
