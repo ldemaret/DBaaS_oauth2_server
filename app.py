@@ -18,3 +18,4 @@ def initdb():
     db.session.add(User(username='admin', password=bcrypt.hashpw('admin'.encode('utf8'), bcrypt.gensalt())))
     db.session.add(User(username='user', password=bcrypt.hashpw('user'.encode('utf8'), bcrypt.gensalt())))
     db.session.commit()
+
