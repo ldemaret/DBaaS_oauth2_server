@@ -23,7 +23,7 @@ class User(db.Model):
         return self.id
 
     def check_password(self, password):
-        return bcrypt.checkpw(password.encode('utf8', self.password)
+        return bcrypt.checkpw(password.encode('utf8'), self.password)
 
 
 class OAuth2Client(db.Model, OAuth2ClientMixin):
