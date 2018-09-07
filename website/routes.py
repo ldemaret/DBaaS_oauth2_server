@@ -70,7 +70,7 @@ def authorize():
         except OAuth2Error as error:
             return error.error
         return render_template('authorize.html', user=user, grant=grant)
-    if not user and 'username' in request.form:        
+    if not user and 'usrname' in request.form:        
         username_in = request.form.get('usrname')
         password_in = request.form.get('passwd')
         user = User.query.filter_by(username=username_in).first()
@@ -79,7 +79,7 @@ def authorize():
         else:
             flash('Invalid username/password; logon denied', 'pale-red')
         return redirect(request.url)
-    if request.form['confirm']:
+    if request.form.get('confirm'):
         grant_user = user
     else:
         grant_user = None
