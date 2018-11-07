@@ -1,3 +1,9 @@
+<!DOCTYPE html>
+<html>
+<title>Login Form</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/static/w3.css" type="text/css">
+
 {% if user %}
 <style>pre{white-space:wrap}</style>
 <div>Logged in as <strong>{{user}}</strong> (<a href="{{ url_for('.logout') }}">Log Out</a>)</div>
@@ -13,8 +19,38 @@
 <br><a href="{{ url_for('.create_client') }}">Create Client</a>
 
 {% else %}
-<form action="" method="post">
-  <input type="text" name="username" placeholder="username">
-  <button type="submit">Login / Signup</button>
-</form>
+<body class="w3-blue">
+<div class="w3-card-4 w3-display-middle w3-round w3-light-grey" style="width:400px;">
+    <div class="w3-container w3-round">
+        <form class="w3-container" action="" method="POST">
+            <div class="w3-section">
+                <div class="w3-panel w3-padding-small">
+                    <h3><b>Enter your login credentials</b></h3>
+                </div>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="w3-panel w3-{{ category }} w3-leftbar w3-border-red w3-round w3-small w3-display-container">
+                    <span onclick="this.parentElement.style.display='none'" class="w3-button w3-{{ category }} w3-hover-{{ category }} w3-round w3-large w3-display-topright">
+                        &times;
+                    </span>
+                    <p>{{ message }}</p>
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+                <label><b>Username</b></label>
+                <input class="w3-input w3-border w3-round w3-margin-bottom" type="text" placeholder="Enter Username" name="usrname" required>
+                <label><p>Password</p></label>
+                <input class="w3-input w3-border w3-round" type="password" placeholder="Enter Password" name="passwd" required>
+                <button class="w3-button w3-block w3-blue w3-round w3-section w3-padding" type="submit">Login</button>
+                <input class="w3-check w3-margin-top" type="checkbox" name="remember" checked>Remember me
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+
+
 {% endif %}
+</html>
